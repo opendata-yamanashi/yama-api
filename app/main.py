@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from app.constants import MAX_COUNT
 from app.yama_data import get_yama_dataframe
 from fastapi.responses import ORJSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 
 
 def _load_data(name: str) -> pd.DataFrame:
@@ -35,6 +36,14 @@ root_path = os.getenv('ROOT_PATH', '')
 app = FastAPI(
     title=f'{name} API',
     root_path=root_path
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["*"],
 )
 
 # 初回データロード
