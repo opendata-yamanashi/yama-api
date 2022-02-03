@@ -6,8 +6,9 @@ import logging
 # import schedule
 # import threading
 # from time import sleep
-from typing import List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 from fastapi import FastAPI
+from pydantic import BaseModel
 from app.constants import MAX_COUNT
 from app.yama_data import get_yama_dataframe
 from fastapi.responses import ORJSONResponse
@@ -92,7 +93,13 @@ def _check_keys_and_values(data: pd.DataFrame,
     return (True, ORJSONResponse())
 
 
-@app.get('/', response_class=ORJSONResponse)
+class ReadResponseModel(BaseModel):
+    offset: int
+    count: int
+    total: int
+    data: List[Dict[str, str]]
+
+@app.get('/', response_model=ReadResponseModel, response_class=ORJSONResponse)
 def read(keys: Optional[str] = None,
          values: Optional[str] = None,
          count: int = MAX_COUNT,
@@ -140,7 +147,10 @@ def read(keys: Optional[str] = None,
           })
 
 
-@app.get('/keys', response_class=ORJSONResponse)
+class KeysResponseModel(BaseModel):
+    keys: List[str]
+
+@app.get('/keys', response_model=KeysResponseModel, response_class=ORJSONResponse)
 def keys() -> ORJSONResponse:
     """キー一覧を取得."""
     if data is None:
@@ -152,7 +162,13 @@ def keys() -> ORJSONResponse:
         return ORJSONResponse(content={'keys': data.columns.tolist()})
 
 
-@app.get('/values/{key}', response_class=ORJSONResponse)
+class ValuesResponseModel(BaseModel):
+    offset: int
+    count: int
+    total: int
+    values: List[str]
+
+@app.get('/values/{key}', response_model=ValuesResponseModel, response_class=ORJSONResponse)
 def values(key: str,
            count: int = MAX_COUNT,
            offset: int = 1) -> ORJSONResponse:
@@ -182,7 +198,17 @@ def values(key: str,
     )
 
 
-@app.get('/counts/{key}', response_class=ORJSONResponse)
+class CountItemModel(BaseModel):
+    key: str
+    count: int
+
+class CountsResponseModel(BaseModel):
+    offset: int
+    count: int
+    total: int
+    counts: List[CountItemModel]
+
+@app.get('/counts/{key}', response_model=CountsResponseModel, response_class=ORJSONResponse)
 def counts(key: str,
            keys: Optional[str] = None,
            values: Optional[str] = None,
