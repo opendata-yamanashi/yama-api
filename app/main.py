@@ -99,6 +99,7 @@ class ReadResponseModel(BaseModel):
     total: int
     data: List[Dict[str, str]]
 
+
 @app.get('/', response_model=ReadResponseModel, response_class=ORJSONResponse)
 def read(keys: Optional[str] = None,
          values: Optional[str] = None,
@@ -150,7 +151,9 @@ def read(keys: Optional[str] = None,
 class KeysResponseModel(BaseModel):
     keys: List[str]
 
-@app.get('/keys', response_model=KeysResponseModel, response_class=ORJSONResponse)
+
+@app.get('/keys', response_model=KeysResponseModel,
+         response_class=ORJSONResponse)
 def keys() -> ORJSONResponse:
     """キー一覧を取得."""
     if data is None:
@@ -168,7 +171,9 @@ class ValuesResponseModel(BaseModel):
     total: int
     values: List[str]
 
-@app.get('/values/{key}', response_model=ValuesResponseModel, response_class=ORJSONResponse)
+
+@app.get('/values/{key}', response_model=ValuesResponseModel,
+         response_class=ORJSONResponse)
 def values(key: str,
            count: int = MAX_COUNT,
            offset: int = 1) -> ORJSONResponse:
@@ -202,13 +207,16 @@ class CountItemModel(BaseModel):
     key: str
     count: int
 
+
 class CountsResponseModel(BaseModel):
     offset: int
     count: int
     total: int
     counts: List[CountItemModel]
 
-@app.get('/counts/{key}', response_model=CountsResponseModel, response_class=ORJSONResponse)
+
+@app.get('/counts/{key}', response_model=CountsResponseModel,
+         response_class=ORJSONResponse)
 def counts(key: str,
            keys: Optional[str] = None,
            values: Optional[str] = None,
