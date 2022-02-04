@@ -22,7 +22,7 @@ def get_yama_dataframe(url: str) -> Optional[pd.DataFrame]:
 
         # Tableの中身を取り出す
         rows = info.find_all('tr')
-        if len(rows) > 1:            
+        if len(rows) > 1:
             headers = [h.text.strip() for h in rows[0].find_all('th')]
             headers.append('url')
             values = []
@@ -30,7 +30,7 @@ def get_yama_dataframe(url: str) -> Optional[pd.DataFrame]:
                 v = []
                 link = None
                 for r in row.find_all('td'):
-                    if link is None: 
+                    if link is None:
                         # 山名<山頂名>, URLの取り出し
                         link = r.find('a')
                         v.append(link.text.strip())
